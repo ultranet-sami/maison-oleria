@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Check, ChevronRight, HelpCircle, Clock, Star, Shield, Info } from "lucide-react";
@@ -136,8 +136,14 @@ function getStyleReco(profile: { saison?: string; morpho?: string; occasion?: st
   return recos.length > 0 ? recos : ["Completez votre profil pour recevoir des recommandations personnalisees."];
 }
 
-export default function ReserverPage() {
+// useSearchParams() requires the component using it to be rendered inside a
+// <Suspense> boundary, otherwise Next.js cannot statically prerender the
+// page (it needs a fallback to show while search params are resolved on
+// the client). We keep all existing logic in this inner component and
+// only add a thin Suspense wrapper below via the default export.
+function ReserverPageContent() {
   const searchParams = useSearchParams();
+
   const [step, setStep] = useState(1);
   const [paymentStatus, setPaymentStatus] = useState<"success" | "cancelled" | null>(null);
 
@@ -922,4 +928,19 @@ export default function ReserverPage() {
   );
 }
 
+export default function ReserverPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <p className="font-montserrat text-sm text-black/50">Chargement...</p>
+        </div>
+      }
+    >
+      <ReserverPageContent />
+    </Suspense>
+  );
+}
+
 // File contains AI-generated response based on internal company sources
+
