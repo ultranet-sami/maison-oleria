@@ -10,23 +10,13 @@ import { useStoryblokBridge } from "@storyblok/react";
 
 
 export default function StoryblokBridgeLoader({ storyId }: { storyId: number }) {
-  useEffect(() => {
-    if (!storyId) return;
-    // useStoryblokBridge is a hook and must not be called conditionally
-    // or from inside a non-render context (e.g. useEffect callback body
-    // invoked imperatively). It internally sets up the bridge listener
-    // and returns a cleanup; calling it like a plain function here means
-    // React's rules-of-hooks lint would flag it and, more importantly,
-    // any cleanup it registers is never wired up. Call it directly at
-    // the top of the effect (still fine since useEffect itself already
-    // gates on the client) and capture no return value misuse.
-    const unregister = useStoryblokBridge(storyId, () => {
-      window.location.reload();
-    });
-    return () => {
-      if (typeof unregister === "function") unregister();
-    };
-  }, [storyId]);
+  // useStoryblokBridge is a React hook and must be called directly at the
+  // top level of the component (not inside a useEffect callback body).
+  // It internally guards against running when storyId is falsy and wires
+  // up its own listener/cleanup, so no manual useEffect wrapper is needed.
+  useStoryblokBridge(storyId, () => {
+    window.location.reload();
+  });
   return null;
 }
 

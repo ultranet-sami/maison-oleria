@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { acceptAll, readConsent, rejectAll, writeConsent } from "@/lib/consent/storage";
 import { isConsentRequired, type ConsentState } from "@/lib/consent/config";
@@ -51,9 +52,9 @@ export default function ConsentBanner() {
               Nous utilisons des cookies pour ameliorer votre experience, mesurer l&apos;audience et,
               si vous l&apos;acceptez, personnaliser la publicite. Vous pouvez modifier vos choix a
               tout moment depuis notre{" "}
-              <a href="/confidentialite" className="text-gold underline">
+              <Link href="/confidentialite" className="text-gold underline">
                 Centre de confidentialite
-              </a>
+              </Link>
               .
             </p>
             <div className="flex gap-3 flex-shrink-0">

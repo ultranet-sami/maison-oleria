@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Mentions legales | Maison Oleria",
@@ -41,9 +42,9 @@ export default function MentionsLegalesPage() {
           <p>
             Pour toute information sur le traitement de vos donnees personnelles, veuillez consulter
             notre{" "}
-            <a href="/confidentialite" className="text-gold hover:underline">
+            <Link href="/confidentialite" className="text-gold hover:underline">
               Politique de confidentialite
-            </a>
+            </Link>
             .
           </p>
         </div>

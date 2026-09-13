@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { X } from "lucide-react";
 
 // ---------------------------------------------------------------
@@ -96,12 +97,12 @@ export default function LaunchBanner() {
 
         {/* Right: CTA + Close */}
         <div className="flex items-center gap-3">
-          <a
+          <Link
             href="/reserver"
             className="font-montserrat text-[9px] tracking-[0.2em] uppercase bg-gold text-black px-4 py-2 hover:bg-[#A8894E] transition-colors duration-200"
           >
             Profiter
-          </a>
+          </Link>
           <button onClick={dismiss} className="text-[#C8B8A6] hover:text-white transition-colors">
             <X size={14} />
           </button>
@@ -110,3 +111,5 @@ export default function LaunchBanner() {
     </div>
   );
 }
+
+// File contains AI-generated response based on internal company sources
