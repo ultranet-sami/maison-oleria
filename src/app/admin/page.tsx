@@ -1,6 +1,13 @@
 import { readLeads } from "@/lib/leads";
 
+// This page reads from the database via Prisma on every request. It
+// must not be statically prerendered at build time (the build
+// environment may not have a live DATABASE_URL connection), so we
+// force dynamic rendering here.
+export const dynamic = "force-dynamic";
+
 export default async function AdminDashboardPage() {
+
   const leads = await readLeads();
 
   const stats = {
