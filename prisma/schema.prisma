@@ -1,0 +1,179 @@
+// -----------------------------------------------------------------
+// Prisma schema — Maison Oleria (Enterprise architecture, Phase 1)
+// -----------------------------------------------------------------
+// Provider: PostgreSQL (Supabase or Neon both work unmodified since
+// they expose a standard Postgres connection string).
+// Run:
+//   npx prisma migrate dev --name init      (local/dev)
+//   npx prisma migrate deploy                (CI/CD, production)
+//   npx prisma generate
+// -----------------------------------------------------------------
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  // Supabase/Neon pooled connection for serverless (Vercel) + a
+  // direct connection for migrations, as recommended by both providers.
+  directUrl = env("DIRECT_URL")
+}
+
+enum LeadType {
+  CONTACT
+  NEWSLETTER
+  RESERVATION
+  CONSULTATION
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+// Unified lead/CRM record. Replaces the old data/leads.json file store.
+model Lead {
+  id             String        @id @default(cuid())
+  type           LeadType
+  name           String?
+  email          String
+  phone          String?
+  service        String?
+  message        String?
+  budget         String?
+
+  // Reservation / consultation specific fields
+  formule        String?
+  price          Float?
+  paymentMode    String?
+  paymentStatus  PaymentStatus?
+  occasion       String?
+  morpho         String?
+  saison         String?
+  styleGoal      String?
+
+  raw            Json?
+
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  auditLogs      AuditLog[]
+
+  @@index([email])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model Contact {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  service   String?
+  message   String?
+  ipHash    String?
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([createdAt])
+}
+
+model Consultation {
+  id          String   @id @default(cuid())
+  leadId      String?
+  name        String
+  email       String
+  formule     String
+  scheduledAt DateTime?
+  status      String   @default("pending") // pending | confirmed | completed | cancelled
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  @@index([email])
+  @@index([status])
+}
+
+model NewsletterSubscriber {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  subscribed   Boolean  @default(true)
+  source       String?
+  consentGiven Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+// Server-side analytics events (complements, not replaces, client
+// pixels). Enables admin dashboards without depending on any
+// third-party analytics account.
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  name      String   // page_view | lead | contact | purchase | newsletter | appointment
+  path      String?
+  sessionId String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([name])
+  @@index([createdAt])
+}
+
+// Centralized structured logs: admin actions, security events, AI
+// assistant usage, webhook activity, etc.
+enum LogLevel {
+  INFO
+  WARN
+  ERROR
+  SECURITY
+}
+
+model Log {
+  id        String   @id @default(cuid())
+  level     LogLevel @default(INFO)
+  source    String   // e.g. "auth", "webhook", "ai-assistant", "checkout"
+  message   String
+  metadata  Json?
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([level])
+  @@index([source])
+  @@index([createdAt])
+}
+
+// Immutable audit trail for sensitive admin actions.
+model AuditLog {
+  id        String   @id @default(cuid())
+  actor     String   // admin email
+  action    String   // e.g. "lead.update", "admin.login", "admin.login_failed"
+  leadId    String?
+  lead      Lead?    @relation(fields: [leadId], references: [id])
+  metadata  Json?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([actor])
+  @@index([action])
+  @@index([createdAt])
+}
+
+// Per-admin AI usage tracking (cost/usage monitoring, Phase 7/8).
+model AiUsageLog {
+  id           String   @id @default(cuid())
+  provider     String   // openai | claude | gemini | nanobanana | openrouter
+  model        String?
+  promptTokens Int?
+  outputTokens Int?
+  costUsd      Float?
+  actor        String?  // admin email
+  success      Boolean  @default(true)
+  errorMessage String?
+  createdAt    DateTime @default(now())
+
+  @@index([provider])
+  @@index([createdAt])
+}

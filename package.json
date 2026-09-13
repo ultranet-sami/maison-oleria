@@ -1,0 +1,53 @@
+{
+  "name": "maison-allure",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate deploy",
+    "prisma:migrate:dev": "prisma migrate dev",
+    "postinstall": "prisma generate"
+  },
+  "dependencies": {
+    "next": "^15.4.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "framer-motion": "^11.18.2",
+    "lucide-react": "^0.525.0",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^2.6.0",
+    "stripe": "^17.4.0",
+    "@stripe/stripe-js": "^5.4.0",
+    "resend": "^4.0.1",
+    "bcryptjs": "^2.4.3",
+    "jose": "^5.9.6",
+    "@storyblok/react": "^4.2.0",
+    "storyblok-js-client": "^6.10.4",
+    "@prisma/client": "^6.1.0",
+    "zod": "^3.24.1",
+    "@sentry/nextjs": "^8.47.0",
+    "@vercel/analytics": "^1.4.1",
+    "@vercel/speed-insights": "^1.1.0"
+  },
+
+
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@types/bcryptjs": "^2.4.6",
+    "typescript": "^5.8.3",
+    "tailwindcss": "^3.4.17",
+    "postcss": "^8.5.3",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.28.0",
+    "eslint-config-next": "^15.4.3",
+    "prisma": "^6.1.0"
+  }
+
+}
