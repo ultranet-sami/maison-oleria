@@ -23,8 +23,9 @@ export async function POST(req: Request) {
     }
 
     const validation = safeValidate(newsletterSchema, body);
-    if (!validation.success) {
-      return NextResponse.json({ error: validation.error }, { status: 400 });
+    if (validation.success === false) {
+      const errorMessage: string = validation.error;
+      return NextResponse.json({ error: errorMessage }, { status: 400 });
     }
     const { email, captchaToken } = validation.data;
 

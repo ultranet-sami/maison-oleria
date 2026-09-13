@@ -52,8 +52,9 @@ export async function POST(req: Request) {
     }
 
     const validation = safeValidate(checkoutSchema, body);
-    if (!validation.success) {
-      return NextResponse.json({ error: validation.error }, { status: 400 });
+    if (validation.success === false) {
+      const errorMessage: string = validation.error;
+      return NextResponse.json({ error: errorMessage }, { status: 400 });
     }
     const { formuleId, formuleName, amount, paymentMode, email, name, occasion, morpho, saison, styleGoal, captchaToken } =
       validation.data;
