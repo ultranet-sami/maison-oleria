@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Chatbot from "@/components/Chatbot";
 import { LanguageProvider } from "@/context/LanguageContext";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata: Metadata = {
   title: {
@@ -84,6 +85,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <Footer />
           <Chatbot />
         </LanguageProvider>
+        <SpeedInsights />
         <script
           src="https://assets.calendly.com/assets/external/widget.js"
           async
